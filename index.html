@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expentry — Track. Scan. Analyze.</title>
+  <meta name="description" content="Expentry is your simple yet powerful expense tracker. Track daily spending, scan receipts with OCR, and get smart analytics — all privately on your device.">
+  <meta name="keywords" content="expense tracker, receipt scanner, budget app, spending analytics, personal finance">
+  <meta name="author" content="Doit-Ay">
+  <meta property="og:title" content="Expentry — Track Every Penny">
+  <meta property="og:description" content="Smart expense tracking with receipt scanning, budget tools, and spending analytics. Private & offline.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #F8F3EB;
+      --bg-dark: #1A1612;
+      --text-primary: #2C2418;
+      --text-secondary: #6B5D4F;
+      --accent: #8B7355;
+      --accent-light: #D4B896;
+      --accent-bg: rgba(139, 115, 85, 0.08);
+      --card-bg: #FFFFFF;
+      --card-shadow: 0 2px 20px rgba(44, 36, 24, 0.06);
+      --card-shadow-hover: 0 8px 40px rgba(44, 36, 24, 0.12);
+      --gradient-hero: linear-gradient(135deg, #F8F3EB 0%, #EDE3D3 50%, #E4D5C1 100%);
+      --gradient-accent: linear-gradient(135deg, #8B7355 0%, #A68B6B 100%);
+      --border: rgba(139, 115, 85, 0.12);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== Navigation ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 0;
+      transition: all 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(248, 243, 235, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .nav-logo img {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+    }
+
+    .nav-logo span {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .nav-cta {
+      background: var(--gradient-accent);
+      color: #fff !important;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-weight: 600 !important;
+      transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(139, 115, 85, 0.3);
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      min-height: 100vh;
+      background: var(--gradient-hero);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 115, 85, 0.06) 0%, transparent 70%);
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 24px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-bg);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    .hero h1 .highlight {
+      background: var(--gradient-accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gradient-accent);
+      color: #fff;
+      padding: 16px 32px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(139, 115, 85, 0.35);
+    }
+
+    .btn-primary svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      padding: 16px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone-mockup {
+      width: 280px;
+      height: 580px;
+      background: var(--bg-dark);
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 40px 80px rgba(26, 22, 18, 0.2), 0 0 0 1px rgba(139, 115, 85, 0.1);
+      position: relative;
+      transform: perspective(1000px) rotateY(-5deg);
+      transition: transform 0.5s ease;
+    }
+
+    .phone-mockup:hover {
+      transform: perspective(1000px) rotateY(0deg);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      overflow: hidden;
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mock-header {
+      padding: 48px 20px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mock-header h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .mock-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mock-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.4;
+    }
+
+    .mock-stats {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px;
+      margin-bottom: 16px;
+    }
+
+    .mock-stat {
+      flex: 1;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 12px 10px;
+    }
+
+    .mock-stat-label {
+      font-size: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+    }
+
+    .mock-stat-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .mock-list {
+      flex: 1;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mock-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .mock-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--accent-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .mock-item-text {
+      flex: 1;
+    }
+
+    .mock-item-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mock-item-cat {
+      font-size: 9px;
+      color: var(--text-secondary);
+    }
+
+    .mock-item-amt {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .float-card {
+      position: absolute;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: var(--card-shadow-hover);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .float-card-1 {
+      top: 60px;
+      right: -30px;
+      animation-delay: 0s;
+    }
+
+    .float-card-2 {
+      bottom: 80px;
+      left: -40px;
+      animation-delay: 3s;
+    }
+
+    .float-card-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .float-card-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+
+    .float-card-sub {
+      font-size: 11px;
+      color: #4CAF50;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ===== Features ===== */
+    .features {
+      padding: 120px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 64px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .section-header p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px 28px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-accent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      box-shadow: var(--card-shadow-hover);
+      transform: translateY(-4px);
+      border-color: transparent;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--accent-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .feature-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* ===== How It Works ===== */
+    .how-it-works {
+      padding: 120px 24px;
+      background: linear-gradient(180deg, transparent 0%, rgba(139,115,85,0.04) 100%);
+    }
+
+    .how-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 64px;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-number {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: var(--gradient-accent);
+      color: #fff;
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .step h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 280px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ===== Privacy ===== */
+    .privacy-section {
+      padding: 100px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .privacy-card {
+      background: var(--bg-dark);
+      border-radius: 28px;
+      padding: 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      color: #EDE0D4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .privacy-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -30%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 184, 150, 0.08) 0%, transparent 70%);
+    }
+
+    .privacy-card h2 {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .privacy-card p {
+      font-size: 16px;
+      line-height: 1.7;
+      opacity: 0.8;
+      margin-bottom: 24px;
+    }
+
+    .privacy-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .privacy-feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .privacy-feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(212, 184, 150, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .privacy-feature h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .privacy-feature p {
+      font-size: 13px;
+      margin: 0;
+      opacity: 0.6;
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      padding: 100px 24px;
+      text-align: center;
+    }
+
+    .cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cta h2 {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+
+    .cta p {
+      font-size: 17px;
+      color: var(--text-secondary);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      padding: 48px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-logo img {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+    }
+
+    .footer-logo span {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 60px;
+        padding: 100px 24px 60px;
+      }
+
+      .hero p { margin: 0 auto 36px; }
+      .hero-actions { justify-content: center; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr; gap: 32px; }
+
+      .privacy-card {
+        grid-template-columns: 1fr;
+        padding: 40px 28px;
+      }
+
+      .phone-mockup {
+        width: 240px;
+        height: 500px;
+        transform: none;
+      }
+
+      .float-card { display: none; }
+
+      .nav-links { display: none; }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <img src="assets/icon.png" alt="Expentry">
+        <span>Expentry</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="#download" class="nav-cta">Download</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">Now Available on Google Play</div>
+        <h1>Track Every<br>Penny with <span class="highlight">Clarity</span></h1>
+        <p>Effortlessly manage your expenses, scan receipts with AI-powered OCR, and get smart insights into your spending — all privately on your device.</p>
+        <div class="hero-actions">
+          <a href="#download" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/></svg>
+            Get on Google Play
+          </a>
+          <a href="#features" class="btn-secondary">
+            Learn More →
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="float-card float-card-1">
+          <div class="float-card-label">This Month</div>
+          <div class="float-card-value">₹12,450</div>
+          <div class="float-card-sub">↓ 18% vs last month</div>
+        </div>
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="mock-header">
+              <h3>My Receipts</h3>
+              <div class="mock-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="mock-stats">
+              <div class="mock-stat">
+                <div class="mock-stat-label">Total</div>
+                <div class="mock-stat-value">₹24.8K</div>
+              </div>
+              <div class="mock-stat">
+                <div class="mock-stat-label">Month</div>
+                <div class="mock-stat-value">₹12.4K</div>
+              </div>
+            </div>
+            <div class="mock-list">
+              <div class="mock-item">
+                <div class="mock-icon">🛒</div>
+                <div class="mock-item-text">
+                  <div class="mock-item-name">BigBasket</div>
+                  <div class="mock-item-cat">Groceries • Today</div>
+                </div>
+                <div class="mock-item-amt">₹856</div>
+              </div>
+              <div class="mock-item">
+                <div class="mock-icon">⛽</div>
+                <div class="mock-item-text">
+                  <div class="mock-item-name">HP Petrol</div>
+                  <div class="mock-item-cat">Transport • Yesterday</div>
+                </div>
+                <div class="mock-item-amt">₹2,100</div>
+              </div>
+              <div class="mock-item">
+                <div class="mock-icon">🍕</div>
+                <div class="mock-item-text">
+                  <div class="mock-item-name">Dominos</div>
+                  <div class="mock-item-cat">Dining • Jun 17</div>
+                </div>
+                <div class="mock-item-amt">₹549</div>
+              </div>
+              <div class="mock-item">
+                <div class="mock-icon">💊</div>
+                <div class="mock-item-text">
+                  <div class="mock-item-name">Apollo Pharmacy</div>
+                  <div class="mock-item-cat">Health • Jun 16</div>
+                </div>
+                <div class="mock-item-amt">₹340</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="float-card float-card-2">
+          <div class="float-card-label">Receipt Scanned</div>
+          <div class="float-card-value" style="font-size:16px;">✓ Auto-detected</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-tag">Features</div>
+      <h2>Everything you need to master your money</h2>
+      <p>Simple tools that give you clarity and control over your daily spending.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📸</div>
+        <h3>Smart Receipt Scanner</h3>
+        <p>Snap a photo and our on-device OCR automatically reads the store name, amount, and date. No internet needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Powerful Analytics</h3>
+        <p>Interactive charts, category breakdowns, spending trends, and smart insights that help you understand your habits.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Budget Tracking</h3>
+        <p>Set monthly budgets and track your progress with visual progress bars. Get alerted when you're close to your limit.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏷️</div>
+        <h3>Smart Categories</h3>
+        <p>Organize expenses across Groceries, Dining, Travel, Utilities, and more. See exactly where your money flows.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📤</div>
+        <h3>Export & Share</h3>
+        <p>Share your expense data as CSV, text summary, or screenshot — perfect for records or sharing with family.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Shop Analytics</h3>
+        <p>Search for any store and get a detailed breakdown of your spending history there, with trends and totals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="how-inner">
+      <div class="section-header">
+        <div class="section-tag">How It Works</div>
+        <h2>Start in seconds, not hours</h2>
+        <p>No signup. No cloud. No complexity. Just open and track.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Add an Expense</h3>
+          <p>Snap a receipt or manually enter the store, amount, and category in seconds.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Auto-Scan & Organize</h3>
+          <p>Our OCR reads your receipt. Expenses are automatically categorized and sorted by date.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Analyze & Save</h3>
+          <p>See where your money goes with charts, trends, and insights. Make smarter decisions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="privacy-section" id="privacy">
+    <div class="privacy-card">
+      <div>
+        <h2>Your data stays on your device. Period.</h2>
+        <p>We believe your financial data is nobody's business but yours. Expentry stores everything locally — no accounts, no cloud, no tracking.</p>
+      </div>
+      <div class="privacy-features">
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">🔒</div>
+          <div>
+            <h4>100% Local Storage</h4>
+            <p>All data stays on your phone</p>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">👤</div>
+          <div>
+            <h4>No Account Required</h4>
+            <p>Just install and start tracking</p>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">📡</div>
+          <div>
+            <h4>Works Offline</h4>
+            <p>Full functionality without internet</p>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">🚫</div>
+          <div>
+            <h4>Zero Tracking</h4>
+            <p>No analytics or data collection</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="download">
+    <div class="cta-inner">
+      <h2>Start tracking your expenses today</h2>
+      <p>Join thousands of users who've taken control of their finances with Expentry. Free, private, and powerful.</p>
+      <a href="#" class="btn-primary" style="font-size:18px; padding: 18px 40px;">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.5,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/></svg>
+        Download on Google Play
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="assets/icon.png" alt="Expentry">
+        <span>Expentry</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#privacy">Privacy</a></li>
+        <li><a href="mailto:support@expentry.app">Contact</a></li>
+      </ul>
+      <div class="footer-copy">&copy; 2025 Doit-Ay. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .step, .privacy-feature').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
